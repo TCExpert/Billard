@@ -6,10 +6,27 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Ball {
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
     private double radius; // Radius der Kugel
     private Color color; // Farbe der Kugel
+
+    public double getDx() {
+        return dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
 
@@ -27,6 +44,12 @@ public class Ball {
         this.dy = dy;
     }
 
+    public void shoot(double angle, double power){
+        dx = Math.cos(angle) * power; // Berechnung der Geschwindigkeit basierend auf Winkel und Kraft
+        dy = Math.sin(angle) * power;
+        setVelocity(dx, dy);
+    }
+
     public void move() {
         x += dx; // Bewegung der Kugel basierend auf der Geschwindigkeit
         y += dy;
@@ -35,5 +58,14 @@ public class Ball {
     public void draw(GraphicsContext gc) {
         gc.setFill(color); // Setzen der Farbe der Kugel
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
+    }
+
+    public boolean collidesWith(Ball ball) {
+        double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugeln
+        return distance < radius + ball.radius; // Kollision, wenn der Abstand kleiner als die Summe der Radien ist
+    }
+
+    public boolean collidesWithWall(double width, double height) {
+        return x - radius < 0 || x + radius > width || y - radius < 0 || y + radius > height; // Kollision, wenn die Kugel den Tischrand berührt
     }
 }

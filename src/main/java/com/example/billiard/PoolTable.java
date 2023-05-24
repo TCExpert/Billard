@@ -34,4 +34,8 @@ public class PoolTable {
             gc.fillOval(pocket.getX(), pocket.getY(), pocket.getWidth(), pocket.getHeight()); // Zeichnet die Taschen
         }
     }
+
+    public Ball[] getBalls() {
+
+    }
 }

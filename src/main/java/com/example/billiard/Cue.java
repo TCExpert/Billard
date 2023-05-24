@@ -20,6 +20,10 @@ public class Cue {
         this.angle = angle;
     }
 
+    public double getAngle() {
+        return angle;
+    }
+
     public void setPower(double power) {
         this.power = power;
     }
@@ -36,5 +40,9 @@ public class Cue {
 
         // Zeichnet den Cue als Linie vom Startpunkt zum Endpunkt
         gc.strokeLine(x, y, endX, endY);
+    }
+
+    public boolean isCueSelected(double x, double y) {
+        return false;
     }
 }

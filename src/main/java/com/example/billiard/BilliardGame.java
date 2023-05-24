@@ -19,11 +19,15 @@ public class BilliardGame extends Application {
     private Ball cueBall;
     private Cue cue;
 
+    private boolean isCueSelected = false; // Gibt an, ob der Cue-Stick ausgewählt ist
+    private double cueStartX; // Startposition des Cue-Sticks beim Klicken
+    private double cueStartY;
+
     public BilliardGame() {
         // Initialisierung der Objekte
         poolTable = new PoolTable(WIDTH, HEIGHT);
-        cueBall = new Ball(WIDTH / 2, HEIGHT / 2, 10, Color.WHITE);
-        cue = new Cue(WIDTH / 2, HEIGHT / 2);
+        cueBall = new Ball((double) WIDTH / 2, (double) HEIGHT / 2, 10, Color.WHITE);
+        cue = new Cue((double) WIDTH / 2, (double) HEIGHT / 2);
         // Weitere Initialisierungen können hier erfolgen
     }
 
@@ -48,6 +52,45 @@ public class BilliardGame extends Application {
             }
         };
         timer.start();
+
+        // Event Handler für Mausklick
+
+        canvas.setOnMouseClicked(event -> {
+            if (!isCueSelected && cue.isCueSelected(event.getX(), event.getY())) {
+                // Wenn der Cue-Stick noch nicht ausgewählt ist und der Benutzer auf den Cue-Stick klickt
+                isCueSelected = true;
+                cueStartX = event.getX();
+                cueStartY = event.getY();
+            }
+        });
+
+        // Event Handler für Mausbewegung
+        canvas.setOnMouseMoved(event -> {
+            if (isCueSelected) {
+                // Wenn der Benutzer den Cue-Stick ausgewählt hat
+                cue.setAngle(getCueAngle(event.getX(), event.getY()));
+            }
+        });
+
+        // Event Handler für Mausfreigabe
+        canvas.setOnMouseReleased(event -> {
+            if (isCueSelected) {
+                // Wenn der Benutzer den Cue-Stick freigibt
+                double cueEndX = event.getX();
+                double cueEndY = event.getY();
+                double cuePower = calculateCuePower(cueStartX, cueStartY, cueEndX, cueEndY);
+
+                // Setzen der Stoßkraft und Ausrichtung des Cue-Sticks
+                cue.setPower(cuePower);
+                cue.setAngle(getCueAngle(event.getX(), event.getY()));
+
+                // Kugel stoßen
+                cueBall.shoot(cue.getAngle(), cuePower);
+
+                // Zurücksetzen der Cue-Stick-Selektion
+                isCueSelected = false;
+            }
+        });
     }
 
     private void update() {
@@ -55,7 +98,7 @@ public class BilliardGame extends Application {
         cueBall.move();
 
         // Kollisionsprüfung mit den Wänden des Pool-Tischs
-        if (poolTable.collidesWithWall(cueBall)) {
+        if (cueBall.collidesWithWall(cueBall)) {
             // Handle Kollision mit den Wänden
             // Zum Beispiel Richtung umkehren
             cueBall.setVelocity(-cueBall.getDx(), -cueBall.getDy());
@@ -69,6 +112,19 @@ public class BilliardGame extends Application {
                 // Implementieren Sie geeignete Physik-Logik für den Stoß
             }
         }
+    }
+
+    private double getCueAngle(double mouseX, double mouseY) {
+        double dx = mouseX - cueBall.getX();
+        double dy = mouseY - cueBall.getY();
+        return Math.atan2(dy, dx);
+    }
+
+    private double calculateCuePower(double startX, double startY, double endX, double endY) {
+        double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
+        // Implementieren Sie hier Ihre eigene Logik, um die Stoßkraft basierend auf der Entfernung zu berechnen
+        // Zum Beispiel: Verwenden Sie eine Skalierungsfaktor, um die Mausentfernung in eine geeignete Stoßkraft umzurechnen
+        return distance * 0.1; // Beispiel: Skalierungsfaktor 0.1
     }
 
     private void draw(GraphicsContext gc) {
