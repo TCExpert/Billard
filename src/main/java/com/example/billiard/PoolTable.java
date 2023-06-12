@@ -1,6 +1,5 @@
 package com.example.billiard;
 
-// Schritt 4: Design der PoolTable-Klasse
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,16 +11,29 @@ import javafx.scene.paint.Color;
 public class PoolTable {
     private double width;
     private double height;
-    private List<Pocket> pockets;
+    private ArrayList<Pocket> pockets;
+
+
+
+
+
 
     public PoolTable(double width, double height) {
         this.width = width;
         this.height = height;
         pockets = new ArrayList<>();
-    }
-
-    public void addPocket(Pocket pocket) {
-        pockets.add(pocket);
+        Pocket topLeftPocket = new Pocket(0 , 0, 20, 20);
+        Pocket topMiddlePocket = new Pocket(width/2, 0, 20,20);
+        Pocket topRightPocket = new Pocket(width-20,0,20,20);
+        Pocket bottomLeftPocket = new Pocket(0,height-20,20,20);
+        Pocket bottomMiddlePocket = new Pocket(width/2, height-20, 20, 20);
+        Pocket bottomRightPocket = new Pocket(width-20, height-20, 20, 20);
+        pockets.add(bottomLeftPocket);
+        pockets.add(bottomMiddlePocket);
+        pockets.add(bottomRightPocket);
+        pockets.add(topLeftPocket);
+        pockets.add(topMiddlePocket);
+        pockets.add(topRightPocket);
     }
 
     public void draw(Canvas canvas) {
@@ -35,7 +47,24 @@ public class PoolTable {
         }
     }
 
+    public double getWidth() {
+        return width;
+    }
+
+    public void setWidth(double width) {
+        this.width = width;
+    }
+
+    public double getHeight() {
+        return height;
+    }
+
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
     public Ball[] getBalls() {
 
+        return new Ball[0];
     }
 }

@@ -1,6 +1,5 @@
 package com.example.billiard;
 
-// Schritt 5: Design der Ball-Klasse
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
@@ -16,8 +15,10 @@ public class Ball {
 
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
-    private double radius; // Radius der Kugel
-    private Color color; // Farbe der Kugel
+    private final double radius; // Radius der Kugel
+    private double angle; // Winkel der Kugel
+    private double power; // Schlagkraft des Cue
+    private final Color color; // Farbe der Kugel
 
     public double getDx() {
         return dx;
@@ -44,7 +45,9 @@ public class Ball {
         this.dy = dy;
     }
 
-    public void shoot(double angle, double power){
+    public void shoot(double angle, double power) {
+        this.angle = angle;
+        this.power = power;
         dx = Math.cos(angle) * power; // Berechnung der Geschwindigkeit basierend auf Winkel und Kraft
         dy = Math.sin(angle) * power;
         setVelocity(dx, dy);
@@ -60,12 +63,19 @@ public class Ball {
         gc.fillOval(x - radius, y - radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
     }
 
+    // Methoden prüfen, ob es eine Kollision überhaupt gibt
     public boolean collidesWith(Ball ball) {
         double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugeln
         return distance < radius + ball.radius; // Kollision, wenn der Abstand kleiner als die Summe der Radien ist
     }
 
-    public boolean collidesWithWall(double width, double height) {
+    public boolean collidesWithWall(PoolTable poolTable) {
+        double height = poolTable.getHeight();
+        double width = poolTable.getWidth();
         return x - radius < 0 || x + radius > width || y - radius < 0 || y + radius > height; // Kollision, wenn die Kugel den Tischrand berührt
+    }
+
+    public double getAngel() {
+        return angle;
     }
 }

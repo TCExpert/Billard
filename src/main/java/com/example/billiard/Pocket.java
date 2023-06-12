@@ -1,6 +1,5 @@
 package com.example.billiard;
 
-// Schritt 7: Design der Pocket-Klasse
 
 public class Pocket {
 
@@ -34,5 +33,4 @@ public class Pocket {
         return height;
     }
 
-    // Weitere Methoden können hier hinzugefügt werden
 }

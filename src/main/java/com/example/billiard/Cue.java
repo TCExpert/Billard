@@ -28,10 +28,22 @@ public class Cue {
         this.power = power;
     }
 
-    public void draw(GraphicsContext gc) {
-        double cueLength = 100; // Länge des Cues
+    public double getPower() {
+        return power;
+    }
 
-        gc.setStroke(Color.WHITE); // Setzt die Farbe des Cues auf Weiß
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
+    public void draw(GraphicsContext gc) {
+        double cueLength = 147; // Länge des Cues
+
+        gc.setStroke(Color.BLACK); // Setzt die Farbe des Cues auf Weiß
         gc.setLineWidth(4); // Setzt die Breite der Linie
 
         // Berechnet die Endposition des Cues basierend auf Winkel und Länge
@@ -42,7 +54,5 @@ public class Cue {
         gc.strokeLine(x, y, endX, endY);
     }
 
-    public boolean isCueSelected(double x, double y) {
-        return false;
-    }
+
 }
