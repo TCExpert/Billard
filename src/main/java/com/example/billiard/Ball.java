@@ -5,14 +5,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 public class Ball {
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
     private final double radius; // Radius der Kugel
@@ -20,17 +12,10 @@ public class Ball {
     private double power; // Schlagkraft des Cue
     private final Color color; // Farbe der Kugel
 
-    public double getDx() {
-        return dx;
-    }
-
-    public double getDy() {
-        return dy;
-    }
-
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
 
+    // Constructor
     public Ball(double x, double y, double radius, Color color) {
         this.x = x;
         this.y = y;
@@ -40,8 +25,9 @@ public class Ball {
         dy = 0;
     }
 
+    // Bewegungsmethoden
     public void setVelocity(double dx, double dy) {
-        this.dx = dx;
+        this.dx = dx; // Geschwindigkeit wird aktualisiert
         this.dy = dy;
     }
 
@@ -53,14 +39,23 @@ public class Ball {
         setVelocity(dx, dy);
     }
 
+    public void applyFriction() {
+        // Basis-Reibungskoeffizient
+        double baseFrictionCoefficient = 0.01;
+
+        // Geschwindigkeitsabhängiger Faktor
+        double speedFactor = 1 + 0.1 * Math.sqrt(dx * dx + dy * dy);
+
+        // Verringern Sie die Geschwindigkeit der Kugel um den kombinierten Reibungskoeffizienten
+        dx = dx * (1 - baseFrictionCoefficient * speedFactor);
+        dy = dy * (1 - baseFrictionCoefficient * speedFactor);
+    }
+
+
     public void move() {
         x += dx; // Bewegung der Kugel basierend auf der Geschwindigkeit
         y += dy;
-    }
-
-    public void draw(GraphicsContext gc) {
-        gc.setFill(color); // Setzen der Farbe der Kugel
-        gc.fillOval(x - radius, y - radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
+        applyFriction();
     }
 
     // Methoden prüfen, ob es eine Kollision überhaupt gibt
@@ -75,7 +70,26 @@ public class Ball {
         return x - radius < 0 || x + radius > width || y - radius < 0 || y + radius > height; // Kollision, wenn die Kugel den Tischrand berührt
     }
 
-    public double getAngel() {
-        return angle;
+    // Getter und Setter
+    public double getX() {
+        return x;
+    }
+
+    public double getY() {
+        return y;
+    }
+
+    public double getDx() {
+        return dx;
+    }
+
+    public double getDy() {
+        return dy;
+    }
+
+    // Draw-Methode
+    public void draw(GraphicsContext gc) {
+        gc.setFill(color); // Setzen der Farbe der Kugel
+        gc.fillOval(x - radius, y - radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
     }
 }

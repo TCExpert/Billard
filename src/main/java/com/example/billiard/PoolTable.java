@@ -2,7 +2,6 @@ package com.example.billiard;
 
 
 import java.util.ArrayList;
-import java.util.List;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -13,14 +12,11 @@ public class PoolTable {
     private double height;
     private ArrayList<Pocket> pockets;
 
-
-
-
-
-
+    // Constructor
     public PoolTable(double width, double height) {
         this.width = width;
         this.height = height;
+        // Pockets werden erstellt und der Liste hinzugefügt
         pockets = new ArrayList<>();
         Pocket topLeftPocket = new Pocket(0 , 0, 20, 20);
         Pocket topMiddlePocket = new Pocket(width/2, 0, 20,20);
@@ -36,6 +32,7 @@ public class PoolTable {
         pockets.add(topRightPocket);
     }
 
+    // Draw-Methode
     public void draw(Canvas canvas) {
         GraphicsContext gc = canvas.getGraphicsContext2D();
         gc.setFill(Color.GREEN); // Setzt die Farbe des Tischs auf Grün
@@ -47,6 +44,7 @@ public class PoolTable {
         }
     }
 
+    // Getter und Setter
     public double getWidth() {
         return width;
     }
@@ -61,10 +59,5 @@ public class PoolTable {
 
     public void setHeight(double height) {
         this.height = height;
-    }
-
-    public Ball[] getBalls() {
-
-        return new Ball[0];
     }
 }

@@ -2,8 +2,6 @@ package com.example.billiard;
 
 
 public class Pocket {
-
-
     private double x; // x-Position der Tasche
     private double y; // y-Position der Tasche
     private double width; // Breite der Tasche

@@ -5,6 +5,5 @@ module com.example.billiard {
                             
     opens com.example.billiard to javafx.fxml;
     exports com.example.billiard;
-    exports demo;
-    opens demo to javafx.fxml;
+
 }

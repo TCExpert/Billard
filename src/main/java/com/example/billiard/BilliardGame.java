@@ -18,22 +18,7 @@ public class BilliardGame extends Application {
 
     private final PoolTable poolTable;
     private final Ball cueBall;
-    private final Ball ball1;
-    private final Ball ball2;
-    private final Ball ball3;
-    private final Ball ball4;
-    private final Ball ball5;
-    private final Ball ball6;
-    private final Ball ball7;
-    private final Ball ball8;
-    private final Ball ball9;
-    private final Ball ball10;
-    private final Ball ball11;
-    private final Ball ball12;
-    private final Ball ball13;
-    private final Ball ball14;
-    private final Ball ball15;
-
+    private final Ball ball1, ball2, ball3, ball4, ball5, ball6, ball7, ball8, ball9, ball10, ball11, ball12, ball13, ball14, ball15;
     private final Cue cue;
 
     private boolean isCueSelected = false; // Gibt an, ob der Cue-Stick ausgewählt ist
@@ -151,8 +136,7 @@ public class BilliardGame extends Application {
 
 
         // Kollisionsprüfung mit den Wänden des Pool-Tischs
-        for (int i = 0; i < balls.size(); i++) {
-            Ball currentBall = balls.get(i);
+        for (Ball currentBall : balls) {
             if (currentBall.collidesWithWall(poolTable)) {
                 currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
             }
@@ -170,6 +154,14 @@ public class BilliardGame extends Application {
                     // Richtungsänderung des aktuellen Balls
                     currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
                 }
+            }
+        }
+
+        // Kollisionserkennung mit den Taschen
+        for (int i = 0; i < balls.size(); i++) {
+            Ball currentBall = balls.get(i);
+            if (currentBall.collidesWithWall(poolTable)) {
+                currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
             }
         }
 
