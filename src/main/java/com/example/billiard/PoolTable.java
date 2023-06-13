@@ -60,4 +60,12 @@ public class PoolTable {
     public void setHeight(double height) {
         this.height = height;
     }
+
+    public ArrayList<Pocket> getPockets() {
+        return pockets;
+    }
+
+    public void setPockets(ArrayList<Pocket> pockets) {
+        this.pockets = pockets;
+    }
 }

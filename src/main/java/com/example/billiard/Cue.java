@@ -53,6 +53,4 @@ public class Cue {
         // Zeichnet den Cue als Linie vom Startpunkt zum Endpunkt
         gc.strokeLine(x, y, endX, endY);
     }
-
-
 }

@@ -18,9 +18,8 @@ public class BilliardGame extends Application {
 
     private final PoolTable poolTable;
     private final Ball cueBall;
-    private final Ball ball1, ball2, ball3, ball4, ball5, ball6, ball7, ball8, ball9, ball10, ball11, ball12, ball13, ball14, ball15;
     private final Cue cue;
-
+    private int shots = 0;
     private boolean isCueSelected = false; // Gibt an, ob der Cue-Stick ausgewählt ist
     private double cueStartX; // Startposition des Cue-Sticks beim Klicken
     private double cueStartY;
@@ -33,21 +32,21 @@ public class BilliardGame extends Application {
         balls = new ArrayList<>();
         poolTable = new PoolTable(WIDTH, HEIGHT);
         cueBall = new Ball((double) WIDTH / 2, (double) HEIGHT / 2, 10, Color.WHITE);
-        ball1 = new Ball((double) WIDTH / 3 - 23, (double) HEIGHT / 2 + 11, 10, Color.YELLOW);
-        ball2 = new Ball((double) WIDTH / 3 - 23, (double) HEIGHT / 2 - 11, 10, Color.BLUE);
-        ball3 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2 + 22, 10, Color.RED);
-        ball4 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2, 10, Color.PURPLE);
-        ball5 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2 - 22, 10, Color.ORANGE);
-        ball6 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 + 33, 10, Color.DARKGREEN);
-        ball7 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 + 11, 10, Color.BROWN);
-        ball8 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 - 11, 10, Color.BLACK);
-        ball9 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 - 33, 10, Color.YELLOW);
-        ball10 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 + 44, 10, Color.BLUE);
-        ball11 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 + 22, 10, Color.RED);
-        ball12 = new Ball((double) WIDTH / 3, (double) HEIGHT / 2, 10, Color.PURPLE);
-        ball13 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2, 10, Color.ORANGE);
-        ball14 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 - 22, 10, Color.DARKGREEN);
-        ball15 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 - 44, 10, Color.BROWN);
+        Ball ball1 = new Ball((double) WIDTH / 3 - 23, (double) HEIGHT / 2 + 11, 10, Color.YELLOW);
+        Ball ball2 = new Ball((double) WIDTH / 3 - 23, (double) HEIGHT / 2 - 11, 10, Color.BLUE);
+        Ball ball3 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2 + 22, 10, Color.RED);
+        Ball ball4 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2, 10, Color.PURPLE);
+        Ball ball5 = new Ball((double) WIDTH / 3 - 46, (double) HEIGHT / 2 - 22, 10, Color.ORANGE);
+        Ball ball6 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 + 33, 10, Color.DARKGREEN);
+        Ball ball7 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 + 11, 10, Color.BROWN);
+        Ball ball8 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 - 11, 10, Color.BLACK);
+        Ball ball9 = new Ball((double) WIDTH / 3 - 69, (double) HEIGHT / 2 - 33, 10, Color.YELLOW);
+        Ball ball10 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 + 44, 10, Color.BLUE);
+        Ball ball11 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 + 22, 10, Color.RED);
+        Ball ball12 = new Ball((double) WIDTH / 3, (double) HEIGHT / 2, 10, Color.PURPLE);
+        Ball ball13 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2, 10, Color.ORANGE);
+        Ball ball14 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 - 22, 10, Color.DARKGREEN);
+        Ball ball15 = new Ball((double) WIDTH / 3 - 92, (double) HEIGHT / 2 - 44, 10, Color.BROWN);
         balls.add(cueBall);
         balls.add(ball1);
         balls.add(ball2);
@@ -121,6 +120,7 @@ public class BilliardGame extends Application {
 
                 // Kugel stoßen
                 cueBall.shoot(cue.getAngle(), cuePower);
+                shots = shots+1;
 
                 // Zurücksetzen der Cue-Stick-Selektion
                 isCueSelected = false;
@@ -134,12 +134,9 @@ public class BilliardGame extends Application {
             ball.move();
         }
 
-
         // Kollisionsprüfung mit den Wänden des Pool-Tischs
         for (Ball currentBall : balls) {
-            if (currentBall.collidesWithWall(poolTable)) {
-                currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
-            }
+            handleWallCollision(currentBall, poolTable);
         }
 
         // Kollisionserkennung zwischen Kugeln
@@ -148,26 +145,28 @@ public class BilliardGame extends Application {
 
             for (int j = i + 1; j < balls.size(); j++) {
                 Ball otherBall = balls.get(j);
+
                 if (currentBall.collidesWith(otherBall)) {
-                    // Kraft und Richtungsübertragung auf den neuen Ball
-                    otherBall.setVelocity(currentBall.getDx(), currentBall.getDy());
-                    // Richtungsänderung des aktuellen Balls
-                    currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
+                    currentBall.handleCollisionWith(otherBall);
                 }
             }
         }
 
         // Kollisionserkennung mit den Taschen
-        for (int i = 0; i < balls.size(); i++) {
-            Ball currentBall = balls.get(i);
-            if (currentBall.collidesWithWall(poolTable)) {
-                currentBall.setVelocity(-currentBall.getDy(), currentBall.getDx());
-            }
+        if(balls.removeIf(currentBall -> currentBall.collidesWithPocket(poolTable) && currentBall != cueBall) && (balls.size()==1 && balls.contains(cueBall))){
+                System.out.println(shots);
         }
 
         // Position des Cue aktualisieren
         cue.setX(cueBall.getX());
         cue.setY(cueBall.getY());
+    }
+
+    // Methode zur Behandlung der Kollision mit den Tischwänden
+    private void handleWallCollision(Ball ball, PoolTable poolTable) {
+        if (ball.collidesWithWall(poolTable)) {
+            ball.adjustPositionAndReflectVelocity(poolTable);
+        }
     }
 
     private double getCueAngle(double mouseX, double mouseY) {

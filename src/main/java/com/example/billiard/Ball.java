@@ -4,16 +4,23 @@ package com.example.billiard;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
+import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Ball {
+    private static final Logger logger = LoggerFactory.getLogger(Ball.class);
+
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
     private final double radius; // Radius der Kugel
-    private double angle; // Winkel der Kugel
-    private double power; // Schlagkraft des Cue
     private final Color color; // Farbe der Kugel
 
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
+
+    private double dxHOLD; // x-Komponente der Geschwindigkeit
+    private double dyHOLD; // y-Komponente der Geschwindigkeit
 
     // Constructor
     public Ball(double x, double y, double radius, Color color) {
@@ -27,13 +34,13 @@ public class Ball {
 
     // Bewegungsmethoden
     public void setVelocity(double dx, double dy) {
+        dxHOLD = this.dx;
+        dyHOLD = this.dy;
         this.dx = dx; // Geschwindigkeit wird aktualisiert
         this.dy = dy;
     }
 
     public void shoot(double angle, double power) {
-        this.angle = angle;
-        this.power = power;
         dx = Math.cos(angle) * power; // Berechnung der Geschwindigkeit basierend auf Winkel und Kraft
         dy = Math.sin(angle) * power;
         setVelocity(dx, dy);
@@ -61,13 +68,76 @@ public class Ball {
     // Methoden prüfen, ob es eine Kollision überhaupt gibt
     public boolean collidesWith(Ball ball) {
         double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugeln
-        return distance < radius + ball.radius; // Kollision, wenn der Abstand kleiner als die Summe der Radien ist
+        return distance <= radius + ball.radius; // Kollision, wenn der Abstand kleiner gleich als die Summe der Radien ist
     }
 
+    // Methode zur Behandlung der Kollision mit einer anderen Kugel
+    public void handleCollisionWith(Ball otherBall) {
+        // Berechnung der Kollisionsnormen und Tangentialen
+        double collisionAngle = Math.atan2(otherBall.getY() - y, otherBall.getX() - x);
+        double normalAngle = collisionAngle + Math.PI / 2;
+
+        // Berechnung der Geschwindigkeiten in Normal- und Tangentialrichtung
+        double currentBallNormalVelocity = dx * Math.cos(normalAngle) + dy * Math.sin(normalAngle);
+        double currentBallTangentVelocity = dx * Math.cos(collisionAngle) + dy * Math.sin(collisionAngle);
+        double otherBallNormalVelocity = otherBall.getDx() * Math.cos(normalAngle) + otherBall.getDy() * Math.sin(normalAngle);
+        double otherBallTangentVelocity = otherBall.getDx() * Math.cos(collisionAngle) + otherBall.getDy() * Math.sin(collisionAngle);
+
+        // Berechnung der finalen Geschwindigkeiten
+        double currentBallVelocityXAfterCollision = otherBallNormalVelocity * Math.cos(normalAngle) + currentBallTangentVelocity * Math.cos(collisionAngle);
+        double currentBallVelocityYAfterCollision = otherBallNormalVelocity * Math.sin(normalAngle) + currentBallTangentVelocity * Math.sin(collisionAngle);
+        double otherBallVelocityXAfterCollision = currentBallNormalVelocity * Math.cos(normalAngle) + otherBallTangentVelocity * Math.cos(collisionAngle);
+        double otherBallVelocityYAfterCollision = currentBallNormalVelocity * Math.sin(normalAngle) + otherBallTangentVelocity * Math.sin(collisionAngle);
+
+        // Setzen der neuen Geschwindigkeiten
+        setVelocity(currentBallVelocityXAfterCollision, currentBallVelocityYAfterCollision);
+        otherBall.setVelocity(otherBallVelocityXAfterCollision, otherBallVelocityYAfterCollision);
+    }
+
+
+    // Methode zur Überprüfung der Kollision mit den Tischwänden
     public boolean collidesWithWall(PoolTable poolTable) {
         double height = poolTable.getHeight();
         double width = poolTable.getWidth();
-        return x - radius < 0 || x + radius > width || y - radius < 0 || y + radius > height; // Kollision, wenn die Kugel den Tischrand berührt
+        return x - radius <= 0 || x + radius >= width || y - radius <= 0 || y + radius >= height;
+    }
+
+    public void adjustPositionAndReflectVelocity(PoolTable poolTable) {
+        double collisionX = Math.max(radius, Math.min(x, poolTable.getWidth() - radius));
+        double collisionY = Math.max(radius, Math.min(y, poolTable.getHeight() - radius));
+        adjustPosition(collisionX, collisionY);
+        reflectVelocity(collisionX, collisionY, poolTable);
+    }
+
+    private void adjustPosition(double collisionX, double collisionY) {
+        double distanceX = collisionX - x;
+        double distanceY = collisionY - y;
+        x += distanceX;
+        y += distanceY;
+    }
+
+    private void reflectVelocity(double collisionX, double collisionY, PoolTable poolTable) {
+        if (collisionX == radius || collisionX == poolTable.getWidth() - radius) {
+            dx = -dx;
+        }
+        if (collisionY == radius || collisionY == poolTable.getHeight() - radius) {
+            dy = -dy;
+        }
+    }
+
+
+
+    public boolean collidesWithPocket(PoolTable poolTable) {
+        ArrayList<Pocket> pockets = poolTable.getPockets();
+        for (Pocket pocket : pockets){
+            double px = pocket.getX();
+            double py = pocket.getY();
+            double distance = Math.sqrt(Math.pow(x - px, 2) + Math.pow(y - py, 2));
+            if (distance <= radius + 10){
+                return true;
+            }
+        }
+        return false;
     }
 
     // Getter und Setter
