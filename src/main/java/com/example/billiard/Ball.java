@@ -4,23 +4,17 @@ package com.example.billiard;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
-import java.util.ArrayList;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.List;
 
 public class Ball {
-    private static final Logger logger = LoggerFactory.getLogger(Ball.class);
 
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
-    private final double radius; // Radius der Kugel
+    private double radius; // Radius der Kugel
     private final Color color; // Farbe der Kugel
 
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
-
-    private double dxHOLD; // x-Komponente der Geschwindigkeit
-    private double dyHOLD; // y-Komponente der Geschwindigkeit
 
     // Constructor
     public Ball(double x, double y, double radius, Color color) {
@@ -34,8 +28,6 @@ public class Ball {
 
     // Bewegungsmethoden
     public void setVelocity(double dx, double dy) {
-        dxHOLD = this.dx;
-        dyHOLD = this.dy;
         this.dx = dx; // Geschwindigkeit wird aktualisiert
         this.dy = dy;
     }
@@ -67,9 +59,10 @@ public class Ball {
 
     // Methoden prüfen, ob es eine Kollision überhaupt gibt
     public boolean collidesWith(Ball ball) {
-        double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugeln
-        return distance <= radius + ball.radius; // Kollision, wenn der Abstand kleiner gleich als die Summe der Radien ist
+        double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugelzentren
+        return distance < radius + ball.radius; // Kollision, wenn der Abstand zwischen den Radien überlappt
     }
+
 
     // Methode zur Behandlung der Kollision mit einer anderen Kugel
     public void handleCollisionWith(Ball otherBall) {
@@ -128,12 +121,12 @@ public class Ball {
 
 
     public boolean collidesWithPocket(PoolTable poolTable) {
-        ArrayList<Pocket> pockets = poolTable.getPockets();
+        List<Pocket> pockets = poolTable.getPockets();
         for (Pocket pocket : pockets){
             double px = pocket.getX();
             double py = pocket.getY();
             double distance = Math.sqrt(Math.pow(x - px, 2) + Math.pow(y - py, 2));
-            if (distance <= radius + 10){
+            if (distance <= radius*2){
                 return true;
             }
         }
@@ -141,6 +134,19 @@ public class Ball {
     }
 
     // Getter und Setter
+
+    public void setRadius(double radius) {
+        this.radius = radius;
+    }
+
+    public void setX(double x) {
+        this.x = x;
+    }
+
+    public void setY(double y) {
+        this.y = y;
+    }
+
     public double getX() {
         return x;
     }
@@ -160,6 +166,6 @@ public class Ball {
     // Draw-Methode
     public void draw(GraphicsContext gc) {
         gc.setFill(color); // Setzen der Farbe der Kugel
-        gc.fillOval(x - radius, y - radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
+        gc.fillOval(x-radius , y -radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
     }
 }

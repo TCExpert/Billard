@@ -28,10 +28,6 @@ public class Cue {
         this.power = power;
     }
 
-    public double getPower() {
-        return power;
-    }
-
     public void setX(double x) {
         this.x = x;
     }

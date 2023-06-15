@@ -1,10 +1,10 @@
 module com.example.billiard {
     requires javafx.controls;
     requires javafx.fxml;
-    requires org.slf4j;
+    requires javafx.graphics;
 
 
-    opens com.example.billiard to javafx.fxml;
+    opens com.example.billiard to javafx.graphics;
     exports com.example.billiard;
 
 }
