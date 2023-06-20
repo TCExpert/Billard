@@ -1,16 +1,12 @@
 package com.example.billiard;
 
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class PoolTable {
-    private double width;
-    private double height;
+    final Ball cueBall;
+    final ArrayList<Ball> balls;
     private final List<Pocket> pockets;
 
     private final Pocket topLeftPocket;
@@ -19,10 +15,9 @@ public class PoolTable {
     private final Pocket bottomLeftPocket;
     private final Pocket bottomMiddlePocket;
     private final Pocket bottomRightPocket;
-
-    final Ball cueBall;
-
-    final ArrayList<Ball> balls;
+    ArrayList<Double> usedNumbers = new ArrayList<>();
+    private double width;
+    private double height;
 
     // Constructor
     public PoolTable(double width, double height) {
@@ -30,12 +25,12 @@ public class PoolTable {
         this.height = height;
         // Pockets werden erstellt und der Liste hinzugefügt
         pockets = new ArrayList<>();
-        topLeftPocket = new Pocket(0, 0, 20, 20);
-        topMiddlePocket = new Pocket(width / 2.075, 0, 20, 20);
-        topRightPocket = new Pocket(width - 20, 0, 20, 20);
-        bottomLeftPocket = new Pocket(0, height - 20, 20, 20);
-        bottomMiddlePocket = new Pocket(width / 2.075, height -10, 20, 20);
-        bottomRightPocket = new Pocket(width - 20, height - 20, 20, 20);
+        topLeftPocket = new Pocket(0, 0);
+        topMiddlePocket = new Pocket(width / 2.075, 0);
+        topRightPocket = new Pocket(width - 20, 0);
+        bottomLeftPocket = new Pocket(0, height - 20);
+        bottomMiddlePocket = new Pocket(width / 2.075, height - 10);
+        bottomRightPocket = new Pocket(width - 20, height - 20);
         pockets.add(bottomLeftPocket);
         pockets.add(bottomMiddlePocket);
         pockets.add(bottomRightPocket);
@@ -45,22 +40,22 @@ public class PoolTable {
 
         balls = new ArrayList<>();
 
-        cueBall = new Ball(width / 2, height / 2, 10, Color.WHITE);
-        Ball ball1 = new Ball(width / 3 - 23, height / 2 + 11, 10, Color.YELLOW);
-        Ball ball2 = new Ball(width / 3 - 23, height / 2 - 11, 10, Color.BLUE);
-        Ball ball3 = new Ball(width / 3 - 46, height / 2 + 22, 10, Color.RED);
-        Ball ball4 = new Ball(width / 3 - 46, height / 2, 10, Color.PURPLE);
-        Ball ball5 = new Ball(width / 3 - 46, height / 2 - 22, 10, Color.ORANGE);
-        Ball ball6 = new Ball(width / 3 - 69, height / 2 + 33, 10, Color.DARKGREEN);
-        Ball ball7 = new Ball(width / 3 - 69, height / 2 + 11, 10, Color.BROWN);
-        Ball ball8 = new Ball(width / 3 - 69, height / 2 - 11, 10, Color.BLACK);
-        Ball ball9 = new Ball(width / 3 - 69, height / 2 - 33, 10, Color.YELLOW);
-        Ball ball10 = new Ball(width / 3 - 92, height / 2 + 44, 10, Color.BLUE);
-        Ball ball11 = new Ball(width / 3 - 92, height / 2 + 22, 10, Color.RED);
-        Ball ball12 = new Ball(width / 3, height / 2, 10, Color.PURPLE);
-        Ball ball13 = new Ball(width / 3 - 92, height / 2, 10, Color.ORANGE);
-        Ball ball14 = new Ball(width / 3 - 92, height / 2 - 22, 10, Color.DARKGREEN);
-        Ball ball15 = new Ball(width / 3 - 92, height / 2 - 44, 10, Color.BROWN);
+        cueBall = new Ball(width / 2, height / 2, width * 0.0122, "cueBall","cueBall.png");
+        Ball ball1 = new Ball(width / 3 - 23, height / 2 + 11, width * 0.0122, "1","Ball1.png");
+        Ball ball2 = new Ball(width / 3 - 23, height / 2 - 11, width * 0.0122,  "2","Ball2.png");
+        Ball ball3 = new Ball(width / 3 - 46, height / 2 + 22, width * 0.0122,  "3","Ball3.png");
+        Ball ball4 = new Ball(width / 3 - 46, height / 2, width * 0.0122,  "4","Ball4.png");
+        Ball ball5 = new Ball(width / 3 - 46, height / 2 - 22, width * 0.0122,  "5","Ball5.png");
+        Ball ball6 = new Ball(width / 3 - 69, height / 2 + 33, width * 0.0122,  "6","Ball6.png");
+        Ball ball7 = new Ball(width / 3 - 69, height / 2 + 11, width * 0.0122,  "7","Ball7.png");
+        Ball ball8 = new Ball(width / 3 - 69, height / 2 - 11, width * 0.0122,  "8","Ball8.png");
+        Ball ball9 = new Ball(width / 3 - 69, height / 2 - 33, width * 0.0122,  "9","Ball9.png");
+        Ball ball10 = new Ball(width / 3 - 92, height / 2 + 44, width * 0.0122,  "10","Ball10.png");
+        Ball ball11 = new Ball(width / 3 - 92, height / 2 + 22, width * 0.0122,  "11","Ball11.png");
+        Ball ball12 = new Ball(width / 3, height / 2, width * 0.0122,  "12","Ball12.png");
+        Ball ball13 = new Ball(width / 3 - 92, height / 2, width * 0.0122,  "13","Ball13.png");
+        Ball ball14 = new Ball(width / 3 - 92, height / 2 - 22, width * 0.0122, "14","Ball14.png");
+        Ball ball15 = new Ball(width / 3 - 92, height / 2 - 44, width * 0.0122, "15","Ball15.png");
         balls.add(cueBall);
         balls.add(ball1);
         balls.add(ball2);
@@ -84,50 +79,30 @@ public class PoolTable {
         this.width = newWidth;
         this.height = newHeight;
 
-        for (Ball ball: balls) {
-            double ballX = ball.getX() * heightCoefficient;
-
-            double ballY = ball.getY() * widthCoefficient;
-            ball.setX(ballX);
-            ball.setY(ballY);
+        for (Ball ball : balls) {
+            ball.setX(ball.getX() * heightCoefficient);
+            ball.setY(ball.getY() * widthCoefficient);
         }
 
         usedNumbers.add(newWidth);
         usedNumbers.add(newHeight);
 
-
-
-
         double radius = newWidth * 0.0367;
 
-        topLeftPocket.update(0, 0, radius, radius);
-        topMiddlePocket.update(newWidth / 2.075, 0, radius, radius);
-        topRightPocket.update(newWidth - radius, 0, radius, radius);
-        bottomLeftPocket.update(0, newHeight - radius, radius, radius);
-        bottomMiddlePocket.update(newWidth / 2.075, newHeight - radius/2, radius, radius);
-        bottomRightPocket.update(newWidth - radius, newHeight - radius, radius, radius);
-
-
+        topLeftPocket.update(0, 0);
+        topMiddlePocket.update(newWidth / 2.075, 0);
+        topRightPocket.update(newWidth - radius, 0);
+        bottomLeftPocket.update(0, newHeight - radius);
+        bottomMiddlePocket.update(newWidth / 2.075, newHeight - radius / 2);
+        bottomRightPocket.update(newWidth - radius, newHeight - radius);
     }
-    ArrayList<Double> usedNumbers = new ArrayList<>();
-    public boolean proof(double newHeight, double newWidth){
-        if (usedNumbers.contains(newHeight)||usedNumbers.contains(newWidth)){
+
+    public boolean proof(double newHeight, double newWidth) {
+        if (usedNumbers.contains(newHeight) || usedNumbers.contains(newWidth)) {
             return false;
         }
         usedNumbers.clear();
-
         return true;
-    }
-
-
-    // Draw-Methode
-    public void draw(Canvas canvas) {
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.YELLOW); // Setzt die Farbe der Taschen auf Schwarz
-        for (Pocket pocket : pockets) {
-            gc.fillOval(pocket.getX(), pocket.getY(), pocket.getWidth(), pocket.getHeight()); // Zeichnet die Taschen
-        }
     }
 
     // Getter und Setter

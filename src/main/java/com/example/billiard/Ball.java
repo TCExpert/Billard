@@ -2,28 +2,36 @@ package com.example.billiard;
 
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Ball {
 
+    protected static Map<String, Long> recentCollisions = new HashMap<>();
+    public static final long COLLISION_TIMEOUT = 1000000;
+    private final String id; // id zur eindeutigen Identifikation eines Objekts unabhängig von anderen Parametern
+    ArrayList<Long> collisionTimestamp = new ArrayList<>();
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
     private double radius; // Radius der Kugel
-    private final Color color; // Farbe der Kugel
-
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
+    private final String imageURL;
 
     // Constructor
-    public Ball(double x, double y, double radius, Color color) {
+    public Ball(double x, double y, double radius, String id, String imageURL) {
+        this.id = id;
         this.x = x;
         this.y = y;
         this.radius = radius;
-        this.color = color;
+        this.imageURL = imageURL;
         dx = 0; // Anfangsgeschwindigkeit auf 0 setzen
         dy = 0;
+        collisionTimestamp.add(0, 295765431406600L);
     }
 
     // Bewegungsmethoden
@@ -57,17 +65,65 @@ public class Ball {
         applyFriction();
     }
 
+
     // Methoden prüfen, ob es eine Kollision überhaupt gibt
     public boolean collidesWith(Ball ball) {
-        double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2)); // Berechnen des Abstands zwischen den Kugelzentren
-        return distance < radius + ball.radius; // Kollision, wenn der Abstand zwischen den Radien überlappt
+        double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2));
+        return distance <= radius*2;
+    }
+
+    public void checkCollision(Ball otherBall, long now) {
+        BallPair collisionPair = new BallPair(this, otherBall);
+        BallPair reverseCollisionPair = new BallPair(otherBall, this); // Neues BallPair-Objekt mit umgekehrter Reihenfolge der Bälle erstellen
+
+        if (recentCollisions.containsKey(collisionPair.pairId) || recentCollisions.containsKey(reverseCollisionPair.pairId)) {
+            long lastCollisionTime = recentCollisions.getOrDefault(collisionPair.pairId, 0L);
+            long lastReverseCollisionTime = recentCollisions.getOrDefault(reverseCollisionPair.pairId, 0L);
+
+            lastCollisionTime = Math.max(lastCollisionTime, lastReverseCollisionTime);
+
+            if (now - lastCollisionTime < COLLISION_TIMEOUT) {
+                // Positionsanpassung überspringen, aber den Rest der Berechnungen durchführen
+                handleCollisionWith(otherBall, now, collisionPair);
+            }
+        }
+        // Positionsanpassung und Berechnungen durchführen
+        adjustPosition(otherBall);
+        handleCollisionWith(otherBall, now, collisionPair);
+    }
+
+
+    private boolean overlaps(Ball otherBall) {
+        double overlap = radius + otherBall.getRadius() - Math.sqrt(Math.pow(x - otherBall.getX(), 2) + Math.pow(y - otherBall.getY(), 2));
+        return overlap > 0;
+    }
+
+    public void adjustPosition(Ball otherBall) {
+        double collisionAngle = Math.atan2(otherBall.getY() - y, otherBall.getX() - x);
+        double overlap = radius + otherBall.getRadius() - Math.sqrt(Math.pow(x - otherBall.getX(), 2) + Math.pow(y - otherBall.getY(), 2));
+
+        if (overlaps(otherBall)) {
+            double separation = overlap / 2;
+            double separationX = separation * Math.cos(collisionAngle);
+            double separationY = separation * Math.sin(collisionAngle);
+
+            // Die Kugeln entlang der Trennungsachse verschieben
+            x -= separationX;
+            y -= separationY;
+        }
     }
 
 
     // Methode zur Behandlung der Kollision mit einer anderen Kugel
-    public void handleCollisionWith(Ball otherBall) {
-        // Berechnung der Kollisionsnormen und Tangentialen
+    public void handleCollisionWith(Ball otherBall, long now, BallPair collisionPair) {
         double collisionAngle = Math.atan2(otherBall.getY() - y, otherBall.getX() - x);
+        // Überprüfen, ob die gleiche Kollision innerhalb der Timeout-Zeitspanne erneut auftritt
+
+        // Kollision dokumentieren
+        recentCollisions.put(collisionPair.pairId, now);
+
+
+        // Berechnung der Kollisionsnormen und Tangentialen
         double normalAngle = collisionAngle + Math.PI / 2;
 
         // Berechnung der Geschwindigkeiten in Normal- und Tangentialrichtung
@@ -95,21 +151,13 @@ public class Ball {
         return x - radius <= 0 || x + radius >= width || y - radius <= 0 || y + radius >= height;
     }
 
-    public void adjustPositionAndReflectVelocity(PoolTable poolTable) {
+    public void handleWallCollision(PoolTable poolTable) {
         double collisionX = Math.max(radius, Math.min(x, poolTable.getWidth() - radius));
         double collisionY = Math.max(radius, Math.min(y, poolTable.getHeight() - radius));
-        adjustPosition(collisionX, collisionY);
-        reflectVelocity(collisionX, collisionY, poolTable);
-    }
-
-    private void adjustPosition(double collisionX, double collisionY) {
         double distanceX = collisionX - x;
         double distanceY = collisionY - y;
         x += distanceX;
         y += distanceY;
-    }
-
-    private void reflectVelocity(double collisionX, double collisionY, PoolTable poolTable) {
         if (collisionX == radius || collisionX == poolTable.getWidth() - radius) {
             dx = -dx;
         }
@@ -119,40 +167,47 @@ public class Ball {
     }
 
 
+    // Getter und Setter
 
     public boolean collidesWithPocket(PoolTable poolTable) {
         List<Pocket> pockets = poolTable.getPockets();
-        for (Pocket pocket : pockets){
+        for (Pocket pocket : pockets) {
             double px = pocket.getX();
             double py = pocket.getY();
             double distance = Math.sqrt(Math.pow(x - px, 2) + Math.pow(y - py, 2));
-            if (distance <= radius*2){
+            if (distance <= radius * 2) {
                 return true;
             }
         }
         return false;
     }
 
-    // Getter und Setter
+    public String getId() {
+        return id;
+    }
+
+    private double getRadius() {
+        return radius;
+    }
 
     public void setRadius(double radius) {
         this.radius = radius;
-    }
-
-    public void setX(double x) {
-        this.x = x;
-    }
-
-    public void setY(double y) {
-        this.y = y;
     }
 
     public double getX() {
         return x;
     }
 
+    public void setX(double x) {
+        this.x = x;
+    }
+
     public double getY() {
         return y;
+    }
+
+    public void setY(double y) {
+        this.y = y;
     }
 
     public double getDx() {
@@ -165,7 +220,32 @@ public class Ball {
 
     // Draw-Methode
     public void draw(GraphicsContext gc) {
-        gc.setFill(color); // Setzen der Farbe der Kugel
-        gc.fillOval(x-radius , y -radius, radius * 2, radius * 2); // Zeichnen der Kugel als Kreis
+        Image ballimage = new Image(imageURL);
+        gc.drawImage(ballimage, x - radius, y - radius, radius * 2, radius * 2);
     }
+
+    public static class BallPair {
+        private final String pairId;
+
+        public BallPair(Ball ball1, Ball ball2) {
+            this.pairId = generatePairId(ball1.getId(), ball2.getId());
+        }
+
+        private String generatePairId(String id1, String id2) {
+            if (id1.equals("cueBall")) {
+                return id1 + id2;
+            } else if (id2.equals("cueBall")) {
+                return id2 + id1;
+            } else {
+                int num1 = Integer.parseInt(id1);
+                int num2 = Integer.parseInt(id2);
+                if (num1 < num2) {
+                    return id1 + id2;
+                } else {
+                    return id2 + id1;
+                }
+            }
+        }
+    }
+
 }
