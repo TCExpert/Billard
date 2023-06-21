@@ -2,6 +2,7 @@ package com.example.billiard;
 
 import javafx.scene.canvas.GraphicsContext;
 
+import java.util.ConcurrentModificationException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -58,7 +59,7 @@ public class BilliardGame {
         recentCollisions.entrySet().removeIf(entry -> now - entry.getValue() > COLLISION_TIMEOUT);
 
         // Kollisionserkennung mit den Taschen
-        if (poolTable.balls.removeIf(currentBall -> currentBall.collidesWithPocket(poolTable) && currentBall != poolTable.cueBall) && (poolTable.balls.size() == 1 && poolTable.balls.contains(poolTable.cueBall))) {
+        if (poolTable.balls.removeIf(currentBall -> currentBall.collidesWithPocket(poolTable) && currentBall != poolTable.cueBall) && (poolTable.balls.size() == 1 && poolTable.balls.contains(poolTable.cueBall)) && isGameOver()) {
             logger.log(Level.INFO, () -> "Du hast so viele Stöße gebraucht: " + shots);
         }
         if (poolTable.cueBall.collidesWithPocket(poolTable)) {
@@ -81,6 +82,9 @@ public class BilliardGame {
             cue.setLineDash(width*0.05586);
         }
     }
+    public boolean isGameOver(){
+        return poolTable.balls.size() == 1 && !poolTable.isFilling();
+    }
 
     double getCueAngle(double mouseX, double mouseY) {
         this.mouseX = mouseX;
@@ -92,7 +96,7 @@ public class BilliardGame {
 
     double calculateCuePower(double startX, double startY, double endX, double endY) {
         double distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2));
-        // Skalierungsfaktor, um die Mausentfernung in eine geeignete Stoßkraft umzurechnen
+        // Skalierungsfaktor, um die Mausentfernung in Stoßkraft umzurechnen
         return Math.abs(distance * 0.1); // Skalierungsfaktor 0.1
     }
 
@@ -113,8 +117,13 @@ public class BilliardGame {
         if (isCueActive()) {
             cue.draw(gc, mouseX, mouseY); // Cue zeichnen
         }
-        for (Ball ball : poolTable.balls) { // Bälle zeichnen
-            ball.draw(gc);
+        try {
+            for (Ball ball : poolTable.balls) { // Bälle zeichnen
+                ball.draw(gc);
+            }
+        } catch (ConcurrentModificationException e){
+            logger.log(Level.WARNING, "Oh es gab einen Fehler der das Spiel nicht beeinflusst. Mach mit dieser Info was du willst");
         }
+
     }
 }

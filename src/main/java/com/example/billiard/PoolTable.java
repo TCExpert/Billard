@@ -19,6 +19,8 @@ public class PoolTable {
     private double width;
     private double height;
 
+    private final boolean isFilling;
+
     // Constructor
     public PoolTable(double width, double height) {
         this.width = width;
@@ -72,6 +74,9 @@ public class PoolTable {
         balls.add(ball13);
         balls.add(ball14);
         balls.add(ball15);
+
+
+        isFilling = false;
     }
 
     public void update(double newWidth, double newHeight, double heightCoefficient, double widthCoefficient) {
@@ -106,6 +111,12 @@ public class PoolTable {
     }
 
     // Getter und Setter
+
+
+    public boolean isFilling() {
+        return isFilling;
+    }
+
     public double getWidth() {
         return width;
     }

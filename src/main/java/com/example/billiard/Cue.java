@@ -1,9 +1,10 @@
 package com.example.billiard;
 
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 
 public class Cue {
     private double x; // x-Position des Cues
@@ -12,8 +13,7 @@ public class Cue {
     // Kraft des Stoßes
     double cueLength; // Länge des Cues
     double cueWidth; // Breite des Cues
-    double lineDash;
-    String imageURL = "CueStick.png";
+    double lineDash; // Abstand zwischen den Strichen
 
     public Cue(double x, double y, double cueLength, double cueWidth, double lineDash) {
         this.lineDash = lineDash;
@@ -35,7 +35,6 @@ public class Cue {
     public void setCueWidth(double cueWidth) {
         this.cueWidth = cueWidth;
     }
-
     public void setCueLength(double cueLength) {
         this.cueLength = cueLength;
     }
@@ -53,29 +52,46 @@ public class Cue {
     }
 
     public void draw(GraphicsContext gc, double mouseX, double mouseY) {
-        gc.setLineWidth(cueWidth); // Setzt die Breite der Linie
+        double cueTipLength = cueLength * 0.1; // Länge der Cue-Spitze
+        double cueStickLength = cueLength * 0.5; // Länge des Cue-Stabs
+        double cueHandleLength = cueLength * 0.3; // Länge des Cue-Griffs
 
         // Invertiert den Winkel um 180 Grad
         double invertedAngle = getAngle() + Math.PI;
 
-        // Berechnet die Endposition des Cues basierend auf invertiertem Winkel und Länge
-        double endX = x + Math.cos(invertedAngle) * cueLength;
-        double endY = y + Math.sin(invertedAngle) * cueLength;
+        // Berechnet die Koordinaten für die Spitze des Cues
+        double cueTipX = x + Math.cos(invertedAngle) * cueTipLength;
+        double cueTipY = y + Math.sin(invertedAngle) * cueTipLength;
 
-        // Lade das Bild und wende es als Textur an
-        Image cueImage = new Image(imageURL);
-        ImagePattern cueImagePattern = new ImagePattern(cueImage);
+        // Berechnet die Koordinaten für das Ende des Cue-Stabs
+        double cueStickX = cueTipX + Math.cos(invertedAngle) * cueStickLength;
+        double cueStickY = cueTipY + Math.sin(invertedAngle) * cueStickLength;
 
-        // Zeichnet den Cue als Linie vom Startpunkt zum Endpunkt
+        // Berechnet die Koordinaten für das Ende des Cue-Griffs
+        double cueHandleX = cueStickX + Math.cos(invertedAngle) * cueHandleLength;
+        double cueHandleY = cueStickY + Math.sin(invertedAngle) * cueHandleLength;
+
+        // Zeichnet die blaue Spitze des Cues
         gc.setLineDashes(0);
-        gc.setStroke(cueImagePattern);
-        gc.strokeLine(x, y, endX, endY);
+        gc.setLineWidth(cueWidth);
+        gc.setStroke(Color.DARKCYAN);
+        gc.strokeLine(x, y, cueTipX, cueTipY);
+
+        // Zeichnet den hellbraunen holzernen Stab des Cues
+        gc.setStroke(Color.SANDYBROWN);
+        gc.strokeLine(cueTipX, cueTipY, cueStickX, cueStickY);
+
+        // Zeichnet den schwarzen Griff des Cues
+        gc.setStroke(Color.BLACK);
+        gc.strokeLine(cueStickX, cueStickY, cueHandleX, cueHandleY);
 
         // Zeichnet die Hilfslinie
         gc.setLineDashes(lineDash);
         gc.setStroke(Color.WHITE);
         gc.strokeLine(x, y, mouseX, mouseY);
     }
+
+
 
 
 }
