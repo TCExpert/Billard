@@ -15,7 +15,7 @@ To run this JavaFX project, you need to have the following installed:
 
 
 ```
-git clone <repository-url>
+git clone <https://github.com/TCExpert/Billiard.git>
 ```
 
 
