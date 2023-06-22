@@ -16,6 +16,9 @@ import javafx.stage.Stage;
 
 public class Start extends Application {
 
+    private static final String TEXT_STYLE = "-fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold";
+    private static final String BUTTON_STYLE = "-fx-font-size: 20px; -fx-background-color: white";
+    private static final String CONTENT_BOX_STYLE = "-fx-background-color: rgba(0, 0, 0, 0.5); -fx-padding: 20px;";
     double heightCoefficient;
     double widthCoefficient;
     double oldHeightHolder = 500;
@@ -23,27 +26,15 @@ public class Start extends Application {
     double oldWidthHolder = 1000;
     double newWidthHolder = 1000;
     int shots;
-
     Image billiardHintergrund = new Image("Billardtisch.jpg");
     ImageView backgroundImageView = new ImageView(billiardHintergrund);
-
-    Canvas canvas = new Canvas(558.625,332.36699999999996);
+    Canvas canvas = new Canvas(558.625, 332.36699999999996);
     GraphicsContext gc = canvas.getGraphicsContext2D();
-
     BilliardGame game = new BilliardGame(canvas.getWidth(), canvas.getHeight());
-
-    private static final String TEXT_STYLE = "-fx-text-fill: white; -fx-font-size: 40px; -fx-font-weight: bold";
-    private static final String BUTTON_STYLE = "-fx-font-size: 20px; -fx-background-color: white";
-    private static final String CONTENT_BOX_STYLE = "-fx-background-color: rgba(0, 0, 0, 0.5); -fx-padding: 20px;";
-
-
-
-
     private Scene startScene;
     private Scene gameScene;
     private Scene endScene;
     private Stage stage;
-
 
 
     public static void main(String[] args) {
@@ -52,7 +43,6 @@ public class Start extends Application {
 
     public void start(Stage primaryStage) {
         stage = primaryStage;
-
 
 
         startScreen();
@@ -182,7 +172,7 @@ public class Start extends Application {
                 // Kugel stoßen
                 game.poolTable.cueBall.shoot(game.cue.getAngle(), cuePower);
                 shots = shots + 1;
-                if (game.isGameOver()){
+                if (game.isGameOver()) {
                     showEndScreen();
                 }
             }
@@ -190,12 +180,6 @@ public class Start extends Application {
 
 
     }
-
-
-
-
-
-
 
 
     public void endScreen() {

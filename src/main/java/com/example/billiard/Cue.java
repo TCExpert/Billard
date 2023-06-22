@@ -2,18 +2,15 @@ package com.example.billiard;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.CycleMethod;
-import javafx.scene.paint.LinearGradient;
-import javafx.scene.paint.Stop;
 
 public class Cue {
-    private double x; // x-Position des Cues
-    private double y; // y-Position des Cues
-    private double angle; // Winkel des Cues
     // Kraft des Stoßes
     double cueLength; // Länge des Cues
     double cueWidth; // Breite des Cues
     double lineDash; // Abstand zwischen den Strichen
+    private double x; // x-Position des Cues
+    private double y; // y-Position des Cues
+    private double angle; // Winkel des Cues
 
     public Cue(double x, double y, double cueLength, double cueWidth, double lineDash) {
         this.lineDash = lineDash;
@@ -35,6 +32,7 @@ public class Cue {
     public void setCueWidth(double cueWidth) {
         this.cueWidth = cueWidth;
     }
+
     public void setCueLength(double cueLength) {
         this.cueLength = cueLength;
     }
@@ -77,7 +75,7 @@ public class Cue {
         gc.setStroke(Color.DARKCYAN);
         gc.strokeLine(x, y, cueTipX, cueTipY);
 
-        // Zeichnet den hellbraunen holzernen Stab des Cues
+        // Zeichnet den hellbraunen hölzernen Stab des Cues
         gc.setStroke(Color.SANDYBROWN);
         gc.strokeLine(cueTipX, cueTipY, cueStickX, cueStickY);
 
@@ -90,8 +88,6 @@ public class Cue {
         gc.setStroke(Color.WHITE);
         gc.strokeLine(x, y, mouseX, mouseY);
     }
-
-
 
 
 }

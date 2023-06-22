@@ -11,11 +11,9 @@ import static com.example.billiard.Ball.recentCollisions;
 
 public class BilliardGame {
 
-    Logger logger = Logger.getLogger(BilliardGame.class.getName());
-
     final PoolTable poolTable;
-
     final Cue cue;
+    Logger logger = Logger.getLogger(BilliardGame.class.getName());
     int shots = 0;
     double cueStartX; // Startposition des Cue-Sticks beim Klicken
     double cueStartY;
@@ -28,7 +26,7 @@ public class BilliardGame {
         // Initialisierung der Objekte
         poolTable = new PoolTable(width, height);
         // Kugeln sind innerhalb des PoolTable initialisiert
-        cue = new Cue(poolTable.cueBall.getX(), poolTable.cueBall.getY(), width*0.26, height*0.01328, width*0.05586);
+        cue = new Cue(poolTable.cueBall.getX(), poolTable.cueBall.getY(), width * 0.26, height * 0.01328, width * 0.05586);
     }
 
     void update(long now) {
@@ -65,7 +63,7 @@ public class BilliardGame {
         if (poolTable.cueBall.collidesWithPocket(poolTable)) {
             poolTable.cueBall.setX(poolTable.getWidth() / 2);
             poolTable.cueBall.setY(poolTable.getHeight() / 2);
-            poolTable.cueBall.setVelocity(0,0);
+            poolTable.cueBall.setVelocity(0, 0);
         }
 
         // Position des Cue aktualisieren
@@ -77,12 +75,13 @@ public class BilliardGame {
         poolTable.update(width, height, heightCoefficient, widthCoefficient);
         for (Ball ball : poolTable.balls) {
             ball.setRadius(width * 0.0122);
-            cue.setCueLength(width*0.26);
-            cue.setCueWidth(height*0.01328);
-            cue.setLineDash(width*0.05586);
+            cue.setCueLength(width * 0.26);
+            cue.setCueWidth(height * 0.01328);
+            cue.setLineDash(width * 0.05586);
         }
     }
-    public boolean isGameOver(){
+
+    public boolean isGameOver() {
         return poolTable.balls.size() == 1 && !poolTable.isFilling();
     }
 
@@ -100,9 +99,9 @@ public class BilliardGame {
         return Math.abs(distance * 0.1); // Skalierungsfaktor 0.1
     }
 
-    public boolean isCueActive(){
+    public boolean isCueActive() {
         for (Ball ball : poolTable.balls) {
-            if (Math.abs(ball.getDx()) >0.009 && Math.abs(ball.getDy()) >0.009) {
+            if (Math.abs(ball.getDx()) > 0.009 && Math.abs(ball.getDy()) > 0.009) {
                 return false;
             }
         }
@@ -121,7 +120,7 @@ public class BilliardGame {
             for (Ball ball : poolTable.balls) { // Bälle zeichnen
                 ball.draw(gc);
             }
-        } catch (ConcurrentModificationException e){
+        } catch (ConcurrentModificationException e) {
             logger.log(Level.WARNING, "Oh es gab einen Fehler der das Spiel nicht beeinflusst. Mach mit dieser Info was du willst");
         }
 

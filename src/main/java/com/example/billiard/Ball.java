@@ -11,16 +11,16 @@ import java.util.Map;
 
 public class Ball {
 
-    protected static Map<String, Long> recentCollisions = new HashMap<>();
     public static final long COLLISION_TIMEOUT = 1000000;
+    protected static Map<String, Long> recentCollisions = new HashMap<>();
     private final String id; // id zur eindeutigen Identifikation eines Objekts unabhängig von anderen Parametern
+    private final String imageURL;
     ArrayList<Long> collisionTimestamp = new ArrayList<>();
     private double x; // x-Position der Kugel
     private double y; // y-Position der Kugel
     private double radius; // Radius der Kugel
     private double dx; // x-Komponente der Geschwindigkeit
     private double dy; // y-Komponente der Geschwindigkeit
-    private final String imageURL;
 
     // Constructor
     public Ball(double x, double y, double radius, String id, String imageURL) {
@@ -69,7 +69,7 @@ public class Ball {
     // Methoden prüfen, ob es eine Kollision überhaupt gibt
     public boolean collidesWith(Ball ball) {
         double distance = Math.sqrt(Math.pow(x - ball.x, 2) + Math.pow(y - ball.y, 2));
-        return distance <= radius*2;
+        return distance <= radius * 2;
     }
 
     public void checkCollision(Ball otherBall, long now) {
@@ -166,9 +166,6 @@ public class Ball {
         }
     }
 
-
-    // Getter und Setter
-
     public boolean collidesWithPocket(PoolTable poolTable) {
         List<Pocket> pockets = poolTable.getPockets();
         for (Pocket pocket : pockets) {
@@ -182,6 +179,8 @@ public class Ball {
         return false;
     }
 
+
+    // Getter und Setter
     public String getId() {
         return id;
     }
@@ -224,6 +223,8 @@ public class Ball {
         gc.drawImage(ballimage, x - radius, y - radius, radius * 2, radius * 2);
     }
 
+
+    // Innere Klasse BallPair
     public static class BallPair {
         private final String pairId;
 

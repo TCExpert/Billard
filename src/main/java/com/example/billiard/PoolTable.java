@@ -15,11 +15,10 @@ public class PoolTable {
     private final Pocket bottomLeftPocket;
     private final Pocket bottomMiddlePocket;
     private final Pocket bottomRightPocket;
+    private final boolean isFilling;
     ArrayList<Double> usedNumbers = new ArrayList<>();
     private double width;
     private double height;
-
-    private final boolean isFilling;
 
     // Constructor
     public PoolTable(double width, double height) {
@@ -42,22 +41,22 @@ public class PoolTable {
 
         balls = new ArrayList<>();
 
-        cueBall = new Ball(width / 2, height / 2, width * 0.0122, "cueBall","cueBall.png");
-        Ball ball1 = new Ball(width / 3 - 23, height / 2 + 11, width * 0.0122, "1","Ball1.png");
-        Ball ball2 = new Ball(width / 3 - 23, height / 2 - 11, width * 0.0122,  "2","Ball2.png");
-        Ball ball3 = new Ball(width / 3 - 46, height / 2 + 22, width * 0.0122,  "3","Ball3.png");
-        Ball ball4 = new Ball(width / 3 - 46, height / 2, width * 0.0122,  "4","Ball4.png");
-        Ball ball5 = new Ball(width / 3 - 46, height / 2 - 22, width * 0.0122,  "5","Ball5.png");
-        Ball ball6 = new Ball(width / 3 - 69, height / 2 + 33, width * 0.0122,  "6","Ball6.png");
-        Ball ball7 = new Ball(width / 3 - 69, height / 2 + 11, width * 0.0122,  "7","Ball7.png");
-        Ball ball8 = new Ball(width / 3 - 69, height / 2 - 11, width * 0.0122,  "8","Ball8.png");
-        Ball ball9 = new Ball(width / 3 - 69, height / 2 - 33, width * 0.0122,  "9","Ball9.png");
-        Ball ball10 = new Ball(width / 3 - 92, height / 2 + 44, width * 0.0122,  "10","Ball10.png");
-        Ball ball11 = new Ball(width / 3 - 92, height / 2 + 22, width * 0.0122,  "11","Ball11.png");
-        Ball ball12 = new Ball(width / 3, height / 2, width * 0.0122,  "12","Ball12.png");
-        Ball ball13 = new Ball(width / 3 - 92, height / 2, width * 0.0122,  "13","Ball13.png");
-        Ball ball14 = new Ball(width / 3 - 92, height / 2 - 22, width * 0.0122, "14","Ball14.png");
-        Ball ball15 = new Ball(width / 3 - 92, height / 2 - 44, width * 0.0122, "15","Ball15.png");
+        cueBall = new Ball(width / 2, height / 2, width * 0.0122, "cueBall", "cueBall.png");
+        Ball ball1 = new Ball(width / 3 - 23, height / 2 + 11, width * 0.0122, "1", "Ball1.png");
+        Ball ball2 = new Ball(width / 3 - 23, height / 2 - 11, width * 0.0122, "2", "Ball2.png");
+        Ball ball3 = new Ball(width / 3 - 46, height / 2 + 22, width * 0.0122, "3", "Ball3.png");
+        Ball ball4 = new Ball(width / 3 - 46, height / 2, width * 0.0122, "4", "Ball4.png");
+        Ball ball5 = new Ball(width / 3 - 46, height / 2 - 22, width * 0.0122, "5", "Ball5.png");
+        Ball ball6 = new Ball(width / 3 - 69, height / 2 + 33, width * 0.0122, "6", "Ball6.png");
+        Ball ball7 = new Ball(width / 3 - 69, height / 2 + 11, width * 0.0122, "7", "Ball7.png");
+        Ball ball8 = new Ball(width / 3 - 69, height / 2 - 11, width * 0.0122, "8", "Ball8.png");
+        Ball ball9 = new Ball(width / 3 - 69, height / 2 - 33, width * 0.0122, "9", "Ball9.png");
+        Ball ball10 = new Ball(width / 3 - 92, height / 2 + 44, width * 0.0122, "10", "Ball10.png");
+        Ball ball11 = new Ball(width / 3 - 92, height / 2 + 22, width * 0.0122, "11", "Ball11.png");
+        Ball ball12 = new Ball(width / 3, height / 2, width * 0.0122, "12", "Ball12.png");
+        Ball ball13 = new Ball(width / 3 - 92, height / 2, width * 0.0122, "13", "Ball13.png");
+        Ball ball14 = new Ball(width / 3 - 92, height / 2 - 22, width * 0.0122, "14", "Ball14.png");
+        Ball ball15 = new Ball(width / 3 - 92, height / 2 - 44, width * 0.0122, "15", "Ball15.png");
         balls.add(cueBall);
         balls.add(ball1);
         balls.add(ball2);
