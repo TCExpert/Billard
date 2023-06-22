@@ -21,7 +21,7 @@ git clone <https://github.com/TCExpert/Billiard.git>
 
 2. Make sure you have JavaFX properly installed and set up on your system.
 
-3. Open the project in your preferred Java IDE (e.g., Eclipse, IntelliJ, NetBeans).
+3. Open the project in your preferred Java IDE (e.g., Eclipse, IntelliJ, Visual Studio).
 
 4. Set up the JavaFX libraries in your IDE. Depending on your IDE, the steps may vary. Here are some general instructions:
 
