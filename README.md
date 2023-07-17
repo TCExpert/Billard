@@ -1,6 +1,6 @@
-# Billiard Game in JavaFX
+# Billard Game in JavaFX
 
-This is a simple single-player Billiard game implemented in JavaFX. The game allows you to play with 15 colored balls and a white cue ball on a pool table.
+This is a simple single-player Billard game implemented in JavaFX. The game allows you to play with 15 colored balls and a white cue ball on a pool table.
 
 ## Prerequisites
 
